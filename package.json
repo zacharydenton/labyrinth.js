@@ -1,0 +1,25 @@
+{
+  "name": "labyrinth.js",
+  "version": "0.1.0",
+  "description": "Maze algorithms in JavaScript.",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/zacharydenton/labyrinth.js.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zacharydenton/labyrinth.js/issues"
+  },
+  "homepage": "https://github.com/zacharydenton/labyrinth.js",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "babel": "^5.8.3",
+    "browserify": "^11.1.0",
+    "eslint": "^1.4.1"
+  },
+  "scripts": {
+    "compile": "babel -d lib/ src/",
+    "prepublish": "npm run compile"
+  }
+}
