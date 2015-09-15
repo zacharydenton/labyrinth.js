@@ -85,11 +85,11 @@ export default class Grid {
   }
 
   generateGrid() {
-    let result = []
-    for (let i = 0; i < this.width; i++) {
-      result[i] = new Array(this.height)
-      for (let j = 0; j < this.height; j++) {
-        result[i][j] = new Cell(i, j)
+    let result = new Array(this.height)
+    for (let row = 0; row < this.height; row++) {
+      result[row] = new Array(this.width)
+      for (let column = 0; column < this.width; column++) {
+        result[row][column] = new Cell(row, column)
       }
     }
     return result
