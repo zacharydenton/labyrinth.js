@@ -14,12 +14,13 @@
   "dependencies": {
   },
   "devDependencies": {
-    "babel": "^5.8.3",
+    "babel": "^5.8.23",
+    "babel-runtime": "^5.8.23",
     "browserify": "^11.1.0",
     "eslint": "^1.4.1"
   },
   "scripts": {
-    "compile": "babel -d lib/ src/",
+    "compile": "babel --optional runtime -d lib/ src/",
     "prepublish": "npm run compile"
   }
 }
