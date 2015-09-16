@@ -23,15 +23,14 @@ class Cell {
   }
 
   get links() {
-    this._links.map((id) => Cell.get(id))
+    this._links.map(id => Cell.get(id))
   }
 
   get neighbors() {
-    let self = this
-    let result = []
-    ["north", "south", "east", "west"].forEach(function(direction) {
-      if (self[direction]) {
-        result.push(self[direction])
+    const result = []
+    ["north", "south", "east", "west"].forEach(direction => {
+      if (this[direction]) {
+        result.push(this[direction])
       }
     })
     return result
@@ -85,7 +84,7 @@ export default class Grid {
   }
 
   generateGrid() {
-    let result = new Array(this.height)
+    const result = new Array(this.height)
     for (let row = 0; row < this.height; row++) {
       result[row] = new Array(this.width)
       for (let column = 0; column < this.width; column++) {
@@ -96,13 +95,50 @@ export default class Grid {
   }
 
   configureCells() {
-    let self = this
-    this.cells.forEach(function(cell) {
-      let {row, column} = cell
-      cell.north = self.get(row - 1, column)
-      cell.south = self.get(row + 1, column)
-      cell.west = self.get(row, column - 1)
-      cell.east = self.get(row, column + 1)
+    this.cells.forEach(cell => {
+      const {row, column} = cell
+      cell.north = this.get(row - 1, column)
+      cell.south = this.get(row + 1, column)
+      cell.west = this.get(row, column - 1)
+      cell.east = this.get(row, column + 1)
     })
+  }
+
+  toString() {
+    return this.rows.map((row, i) => {
+      let result = ""
+
+      if (i == 0) {
+        result += "┌"
+      } else if (i == this.height - 1) {
+        result += "└"
+      } else {
+        result += "├"
+      }
+
+      row.forEach((cell, j) => {
+        if (i == 0) {
+          result += "─┬"
+        } else if (i == this.height - 1) {
+          result += "─┴"
+        } else {
+          result += "─┼"
+        }
+
+        if (j == this.width - 1) {
+          result += "─"
+        }
+      })
+
+      if (i == 0) {
+        result += "┐"
+      } else if (i == this.height - 1) {
+        result += "┘"
+      } else {
+        result += "┤"
+      }
+
+      return result
+    }).join("\n")
   }
 }

@@ -12,10 +12,10 @@
   },
   "homepage": "https://github.com/zacharydenton/labyrinth.js",
   "dependencies": {
+    "babel-runtime": "^5.8.23"
   },
   "devDependencies": {
     "babel": "^5.8.23",
-    "babel-runtime": "^5.8.23",
     "browserify": "^11.1.0",
     "eslint": "^1.4.1"
   },
