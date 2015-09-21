@@ -53,7 +53,10 @@ class Cell {
   }
 
   isLinked(cell) {
-    !!this._links[cell.id]
+    if (!cell) {
+      return false
+    }
+    return !!this._links[cell.id]
   }
 }
 
@@ -109,35 +112,32 @@ export default class Grid {
       let result = ""
 
       if (i == 0) {
-        result += "┌"
-      } else if (i == this.height - 1) {
-        result += "└"
-      } else {
-        result += "├"
+        result += "█"
+        row.forEach(() => {
+          result += "████"
+        })
+        result += "\n"
       }
 
+      let top = "█"
+      let bottom = "█"
       row.forEach((cell, j) => {
-        if (i == 0) {
-          result += "─┬"
-        } else if (i == this.height - 1) {
-          result += "─┴"
+        top += "   "
+        if (cell.isLinked(cell.east)) {
+          top += " "
         } else {
-          result += "─┼"
+          top += "█"
         }
 
-        if (j == this.width - 1) {
-          result += "─"
+        if (cell.isLinked(cell.south)) {
+          bottom += "   "
+        } else {
+          bottom += "███"
         }
+        bottom += "█"
       })
 
-      if (i == 0) {
-        result += "┐"
-      } else if (i == this.height - 1) {
-        result += "┘"
-      } else {
-        result += "┤"
-      }
-
+      result += [top, bottom].join("\n")
       return result
     }).join("\n")
   }
