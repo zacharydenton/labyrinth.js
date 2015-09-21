@@ -1,5 +1,5 @@
 import Grid from "./environments/Grid"
-import BinaryTree from "./generators/BinaryTree"
+import Sidewinder from "./generators/Sidewinder"
 const grid = new Grid(10, 10)
-BinaryTree.on(grid)
+Sidewinder.on(grid)
 console.log(grid.toString())
