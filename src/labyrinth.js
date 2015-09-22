@@ -1,5 +1,5 @@
 import Grid from "./environments/Grid"
-import Sidewinder from "./generators/Sidewinder"
+import AldousBroder from "./generators/AldousBroder"
 const grid = new Grid(10, 10)
-Sidewinder.on(grid)
+AldousBroder.on(grid)
 console.log(grid.toString())

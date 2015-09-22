@@ -1,3 +1,5 @@
+const directions = ["north", "south", "east", "west"]
+
 class Cell {
   static get nextId() {
     this._id = this._id || 0
@@ -23,12 +25,13 @@ class Cell {
   }
 
   get links() {
-    this._links.map(id => Cell.get(id))
+    const keys = Object.keys(this._links)
+    return keys.map(key => Cell.get(this._links[key]))
   }
 
   get neighbors() {
     const result = []
-    ["north", "south", "east", "west"].forEach(direction => {
+    directions.forEach(direction => {
       if (this[direction]) {
         result.push(this[direction])
       }
@@ -74,6 +77,14 @@ export default class Grid {
 
   get cells() {
     return this.rows.reduce((a, b) => a.concat(b))
+  }
+
+  get length() {
+    return this.width * this.height
+  }
+
+  get randomCell() {
+    return this.cells[Math.floor(Math.random() * this.length)]
   }
 
   get(row, column) {
