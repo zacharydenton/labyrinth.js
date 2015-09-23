@@ -1,5 +1,5 @@
 import Grid from "./environments/Grid"
-import AldousBroder from "./generators/AldousBroder"
+import Wilsons from "./generators/Wilsons"
 const grid = new Grid(10, 10)
-AldousBroder.on(grid)
+Wilsons.on(grid)
 console.log(grid.toString())

@@ -83,7 +83,7 @@ export default class Grid {
     return this.width * this.height
   }
 
-  get randomCell() {
+  randomCell() {
     return this.cells[Math.floor(Math.random() * this.length)]
   }
 
