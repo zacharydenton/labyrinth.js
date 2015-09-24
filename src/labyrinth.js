@@ -1,5 +1,5 @@
 import Grid from "./environments/Grid"
-import HuntAndKill from "./generators/HuntAndKill"
+import RecursiveBacktracker from "./generators/RecursiveBacktracker"
 const grid = new Grid(10, 10)
-HuntAndKill.on(grid)
+RecursiveBacktracker.on(grid)
 console.log(grid.toString())
