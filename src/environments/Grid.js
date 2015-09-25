@@ -47,16 +47,20 @@ export default class Grid {
   constructor(width, height) {
     this.width = width
     this.height = height
-    this.grid = this.generateGrid()
+    this.generateGrid()
     this.configureCells()
   }
 
   get rows() {
-    return this.grid
+    const result = []
+    for (let i = 0; i < this.height; i++) {
+      result.push(this.grid.slice(i * this.width, (i + 1) * this.width))
+    }
+    return result
   }
 
   get cells() {
-    return this.rows.reduce((a, b) => a.concat(b))
+    return this.grid
   }
 
   get length() {
@@ -74,18 +78,16 @@ export default class Grid {
     if (column < 0 || column >= this.width) {
       return null
     }
-    return this.grid[row][column]
+    return this.grid[row * this.width + column]
   }
 
   generateGrid() {
-    const result = new Array(this.height)
+    this.grid = []
     for (let row = 0; row < this.height; row++) {
-      result[row] = new Array(this.width)
       for (let column = 0; column < this.width; column++) {
-        result[row][column] = new Cell(row, column)
+        this.grid.push(new Cell(row, column))
       }
     }
-    return result
   }
 
   configureCells() {
