@@ -5,11 +5,11 @@ class Cell {
     this.row = row
     this.column = column
     this.north = this.south = this.east = this.west = null
-    this._links = new Map()
+    this._links = new Set()
   }
 
   get links() {
-    return [...this._links.keys()]
+    return [...this._links]
   }
 
   get neighbors() {
@@ -23,7 +23,7 @@ class Cell {
   }
 
   link(cell, bidirectional=true) {
-    this._links.set(cell, true)
+    this._links.add(cell)
     if (bidirectional) {
       cell.link(this, false)
     }
