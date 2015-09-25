@@ -1,32 +1,15 @@
 const directions = ["north", "south", "east", "west"]
 
 class Cell {
-  static get nextId() {
-    this._id = this._id || 0
-    return this._id++
-  }
-
-  static get(id) {
-    this._cells = this._cells || {}
-    return this._cells[id]
-  }
-
-  static set(id, cell) {
-    this._cells = this._cells || {}
-    this._cells[id] = cell
-  }
-
   constructor(row, column) {
     this.row = row
     this.column = column
-    this.id = Cell.nextId
     this.north = this.south = this.east = this.west = null
-    this._links = {}
+    this._links = new Map()
   }
 
   get links() {
-    const keys = Object.keys(this._links)
-    return keys.map(key => Cell.get(this._links[key]))
+    return [...this._links.keys()]
   }
 
   get neighbors() {
@@ -40,7 +23,7 @@ class Cell {
   }
 
   link(cell, bidirectional=true) {
-    this._links[cell.id] = true
+    this._links.set(cell, true)
     if (bidirectional) {
       cell.link(this, false)
     }
@@ -48,7 +31,7 @@ class Cell {
   }
 
   unlink(cell, bidirectional=true) {
-    delete this._links[cell.id]
+    this._links.delete(cell)
     if (bidirectional) {
       cell.unlink(this, false)
     }
@@ -56,10 +39,7 @@ class Cell {
   }
 
   isLinked(cell) {
-    if (!cell) {
-      return false
-    }
-    return !!this._links[cell.id]
+    return cell && this._links.has(cell)
   }
 }
 
