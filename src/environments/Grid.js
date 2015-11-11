@@ -1,45 +1,59 @@
-const directions = ["north", "south", "east", "west"]
+const [NORTH, EAST, SOUTH, WEST] = [1, 2, 4, 8]
+const DIRECTIONS = [NORTH, EAST, SOUTH, WEST]
+const DELTAS = [[-1, 0], [0, -1], [1, 0], [0, 1]]
 
 class Cell {
-  constructor(row, column) {
+  constructor(grid, row, column) {
+    this.grid = grid
     this.row = row
     this.column = column
-    this.north = this.south = this.east = this.west = null
-    this._links = new Set()
   }
 
   get links() {
-    return [...this._links]
+    return this.grid.links(this.row, this.column)
+  }
+
+  get north() {
+    const cell = this.grid.get(this.row - 1, this.column)
+    if (cell) {
+      cell.direction = NORTH
+    }
+    return cell
+  }
+
+  get east() {
+    const cell = this.grid.get(this.row, this.column - 1)
+    if (cell) {
+      cell.direction = EAST
+    }
+    return cell
+  }
+
+  get south() {
+    const cell = this.grid.get(this.row + 1, this.column)
+    if (cell) {
+      cell.direction = SOUTH
+    }
+    return cell
+  }
+
+  get west() {
+    const cell = this.grid.get(this.row, this.column + 1)
+    if (cell) {
+      cell.direction = WEST
+    }
+    return cell
   }
 
   get neighbors() {
     const result = []
-    directions.forEach(direction => {
-      if (this[direction]) {
-        result.push(this[direction])
+    for (let [dRow, dColumn] of DELTAS) {
+      const cell = this.grid.get(this.row + dRow, this.column + dColumn)
+      if (cell) {
+        result.push(cell)
       }
-    })
+    }
     return result
-  }
-
-  link(cell, bidirectional=true) {
-    this._links.add(cell)
-    if (bidirectional) {
-      cell.link(this, false)
-    }
-    return this
-  }
-
-  unlink(cell, bidirectional=true) {
-    this._links.delete(cell)
-    if (bidirectional) {
-      cell.unlink(this, false)
-    }
-    return this
-  }
-
-  isLinked(cell) {
-    return cell && this._links.has(cell)
   }
 }
 
@@ -48,63 +62,98 @@ export default class Grid {
     this.width = width
     this.height = height
     this.generateGrid()
-    this.configureCells()
   }
 
   get rows() {
     const result = []
-    for (let i = 0; i < this.height; i++) {
-      result.push(this.grid.slice(i * this.width, (i + 1) * this.width))
+    for (let row = 0; row < this.height; row++) {
+      result.push(
+        this.grid.slice(row * this.width, (row + 1) * this.width)
+        .map((_, column) => this.get(row, column))
+      )
     }
     return result
   }
 
   get cells() {
-    return this.grid
+    const result = []
+    for (let row = 0; row < this.height; row++) {
+      for (let column = 0; column < this.width; column++) {
+        result.push(this.get(row, column))
+      }
+    }
+    return result
   }
 
-  get length() {
+  get size() {
     return this.width * this.height
   }
 
-  randomCell() {
-    return this.cells[Math.floor(Math.random() * this.length)]
+  inGrid(row, column) {
+    return !((row < 0 || row >= this.height) ||
+             (column < 0 || column >= this.width))
   }
 
   get(row, column) {
-    if (row < 0 || row >= this.height) {
+    if (!this.inGrid(row, column)) {
       return null
     }
-    if (column < 0 || column >= this.width) {
-      return null
+    return new Cell(this, row, column)
+  }
+
+  links(row, column) {
+    const cell = this.grid[row * this.width + column]
+    return DIRECTIONS.filter(direction => {
+      return (cell & direction) !== 0
+    }).length
+  }
+
+  randomCell() {
+    const row = Math.floor(Math.random() * this.height)
+    const column = Math.floor(Math.random() * this.width)
+    return this.get(row, column)
+  }
+
+  neighbors(row, column) {
+    const result = []
+    const cell = this.get(row, column)
+    for (let i = 0, l = DELTAS.length; i < l; i++) {
+      const [dRow, dColumn] = DELTAS[i]
+      const neighbor = this.get(row + dRow, column + dColumn)
+      if (neighbor) {
+        neighbor.direction = DIRECTIONS[i]
+        result.push(neighbor)
+      }
     }
-    return this.grid[row * this.width + column]
+    return result
   }
 
   generateGrid() {
-    this.grid = []
-    for (let row = 0; row < this.height; row++) {
-      for (let column = 0; column < this.width; column++) {
-        this.grid.push(new Cell(row, column))
-      }
+    this.grid = new Uint8Array(this.size)
+    for (let i = 0, l = this.size; i < l; i++) {
+      this.grid[i] = 0
     }
   }
 
-  configureCells() {
-    this.cells.forEach(cell => {
-      const {row, column} = cell
-      cell.north = this.get(row - 1, column)
-      cell.south = this.get(row + 1, column)
-      cell.west = this.get(row, column - 1)
-      cell.east = this.get(row, column + 1)
-    })
+  link(row, column, direction, bidirectional=true) {
+    if (!this.inGrid(row, column)) {
+      return
+    }
+    const index = row * this.width + column
+    this.grid[index] |= direction
+    if (bidirectional) {
+      const directionIndex = DIRECTIONS.indexOf(direction)
+      const [dRow, dColumn] = DELTAS[directionIndex]
+      const otherDirection = DIRECTIONS[(directionIndex + 2) % DIRECTIONS.length]
+      this.link(row + dRow, column + dColumn, otherDirection, false)
+    }
   }
 
   toString() {
     return this.rows.map((row, i) => {
       let result = ""
 
-      if (i == 0) {
+      if (i === 0) {
         result += "█"
         row.forEach(() => {
           result += "████"
@@ -115,14 +164,15 @@ export default class Grid {
       let top = "█"
       let bottom = "█"
       row.forEach((cell, j) => {
+        const links = this.grid[i * this.width + j]
         top += "   "
-        if (cell.isLinked(cell.east)) {
+        if ((links & EAST) !== 0) {
           top += " "
         } else {
           top += "█"
         }
 
-        if (cell.isLinked(cell.south)) {
+        if ((links & SOUTH) !== 0) {
           bottom += "   "
         } else {
           bottom += "███"

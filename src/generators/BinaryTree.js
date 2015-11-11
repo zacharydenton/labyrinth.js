@@ -10,7 +10,8 @@ export default class BinaryTree {
       }
       const index = Math.floor(Math.random() * neighbors.length)
       if (neighbors[index]) {
-        cell.link(neighbors[index])
+        const {row, column} = cell
+        grid.link(row, column, neighbors[index].direction)
       }
     })
   }
